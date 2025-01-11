@@ -1,0 +1,7 @@
+.base {
+  background-color: white;
+  width: 70%;
+  aspect-ratio: 16/9;
+  border: 2px solid #ebeef0;
+  border-radius: 10px;
+}
