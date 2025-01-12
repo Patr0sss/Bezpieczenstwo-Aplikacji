@@ -22,7 +22,7 @@ export default function FriendChat({
       ) : (
         "Select a friend"
       )}
-      <MessageBar setMessages={setConfMessages} />
+      <MessageBar setMessages={setConfMessages} currentFriend={currentFriend} />
     </div>
   );
 }
@@ -105,23 +105,28 @@ const NavBar = ({ currentFriend }: { currentFriend: friendType | null }) => {
 
 const MessageBar = ({
   setMessages,
+  currentFriend,
 }: {
   setMessages: Dispatch<SetStateAction<messageType[]>>;
+  currentFriend: friendType | null;
 }) => {
   const userId = useSelector((state: RootState) => state.auth.userInfo.id);
   const messageRef = useRef<HTMLInputElement>(null);
-  const [message, setMessage] = useState<messageType>({
-    senderId: userId ?? -1,
-    receiverId: 1,
-    message: "",
-    id: 100,
-  });
+  const friendId = currentFriend?.id;
+  const [messageText, setMessageText] = useState<string>("");
 
   const appendMessage = () => {
+    const newMessage: messageType = {
+      senderId: userId,
+      receiverId: friendId,
+      message: messageText,
+      id: Date.now(),
+    };
+
     if (messageRef.current) {
       messageRef.current.value = "";
     }
-    setMessages((prevMessages) => [...prevMessages, message]);
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
   };
 
   return (
@@ -134,7 +139,7 @@ const MessageBar = ({
         type="text"
         placeholder="Enter Text Here..."
         className={styles.sendInput}
-        onChange={(e) => setMessage({ ...message, message: e.target.value })}
+        onChange={(e) => setMessageText(e.target.value)}
       />
     </div>
   );
