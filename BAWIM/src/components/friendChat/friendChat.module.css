@@ -124,6 +124,10 @@
   padding: 10px;
   border-radius: 5px;
   margin-top: 10px;
+  word-wrap: break-word;
+  word-break: break-word;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
 }
 
 .messageFromFriend {
