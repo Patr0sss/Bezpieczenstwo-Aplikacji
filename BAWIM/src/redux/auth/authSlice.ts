@@ -2,11 +2,14 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { userLogin, userLogout } from "./authActions";
 
 const isLoggedIn = localStorage.getItem("token") ? true : false;
+const username = localStorage.getItem("username") || "";
+const id = parseInt(localStorage.getItem("userId") || "");
 
 export interface AuthState {
   loading: boolean;
   userInfo: {
     username: string;
+    id?: number;
   };
   isLoggedIn: boolean;
   error: string | null;
@@ -14,7 +17,7 @@ export interface AuthState {
 
 const initialState: AuthState = {
   loading: false,
-  userInfo: { username: "" },
+  userInfo: { username, id },
   isLoggedIn,
   error: null,
 };

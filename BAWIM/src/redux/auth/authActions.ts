@@ -9,9 +9,11 @@ export const userLogin = createAsyncThunk(
     try {
       console.log(password);
       localStorage.setItem("token", "token");
+      localStorage.setItem("username", username);
+      localStorage.setItem("userId", JSON.stringify(202));
       return {
         loading: false,
-        userInfo: { username },
+        userInfo: { username, id: 202 },
         isLoggedIn: true,
         error: "",
       };
@@ -26,6 +28,8 @@ export const userLogout = createAsyncThunk(
   (_, { rejectWithValue }) => {
     try {
       localStorage.removeItem("token");
+      localStorage.removeItem("username");
+      localStorage.removeItem("userId");
       return {
         loading: false,
         userInfo: { username: "" },

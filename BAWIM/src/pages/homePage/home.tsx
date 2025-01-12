@@ -1,26 +1,32 @@
 import styles from "./home.module.css";
-import { userLogout } from "../../redux/auth/authActions";
-import { AppDispatch, RootState } from "../../redux/store";
-import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import FriendList from "../../components/friendList/friendList";
+import friends from "./friends";
+import FriendChat from "../../components/friendChat/friendChat";
+import { friendType } from "../../types";
 
 export default function Home() {
+  const [currentFriend, setCurrentFriend] = useState<friendType | null>(null);
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
-  const username = useSelector(
-    (state: RootState) => state.auth.userInfo.username
-  );
-
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
-  const handleLogout = () => {
-    dispatch(userLogout());
-    navigate("/login");
-  };
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      navigate("/login");
+    }
+  });
+
   return (
     <div className={styles.base}>
-      <h1>Home of {username}</h1>
-      <h2>{isLoggedIn ? "Zalogowano" : "Wylogowano"}</h2>
-      <button onClick={handleLogout}>Logout</button>
+      <FriendList
+        friends={friends}
+        currentFriend={currentFriend}
+        setCurrentFriend={setCurrentFriend}
+      />
+      <FriendChat currentFriend={currentFriend} />
     </div>
   );
 }

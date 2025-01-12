@@ -6,3 +6,9 @@
   display: grid;
   place-items: center;
 }
+
+@media (max-width: 900px) {
+  #root {
+    display: none;
+  }
+}

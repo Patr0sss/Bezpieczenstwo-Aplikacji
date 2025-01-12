@@ -1,0 +1,139 @@
+.friendChatContainer {
+  width: 75%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.navBar {
+  width: 96%;
+  padding-inline: 2%;
+  height: 67px;
+  border-bottom: 3px solid #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.messageBar {
+  width: 100%;
+  height: 67px;
+  border-top: 3px solid #f5f5f5;
+}
+
+.userImage {
+  width: 55px;
+  height: 55px;
+  flex-shrink: 0;
+  border-radius: 50%;
+}
+.username {
+  font-weight: bold;
+}
+
+.friendInfo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  width: 50%;
+  height: 100%;
+  gap: 15px;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.statusIcon {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.addPhoto {
+  cursor: pointer;
+  color: grey;
+  border: 2px solid lightgrey;
+  border-radius: 10px;
+  padding: 5px;
+  width: 40px;
+  height: 40px;
+}
+
+.addPhoto:hover {
+  opacity: 0;
+}
+
+.chat {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding-bottom: 15px;
+  overflow-y: auto;
+}
+
+.sendBar {
+  display: flex;
+  align-items: center;
+  height: 38px;
+  width: 90%;
+  margin: 0 auto;
+  border-radius: 5px;
+  border: 2px solid #f5f5f5;
+  flex-shrink: 0;
+  margin-block: 10px;
+}
+
+.sendButton {
+  width: 50px;
+  height: 100%;
+  border: 1px solid #f5f5f5;
+  background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.sendButton:hover {
+  background-color: #ebeef0;
+}
+
+.sendInput {
+  width: calc(100% - 50px);
+  height: 100%;
+  border: none;
+  padding-inline: 10px;
+  outline: none;
+}
+
+.messageContainer {
+  width: 100%;
+  display: flex;
+  margin-bottom: 2px;
+}
+
+.messageFromFriend,
+.userMessage {
+  display: flex;
+  max-width: 45%;
+  text-align: left;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.messageFromFriend {
+  background-color: #efefef;
+  margin-left: 2%;
+  justify-content: left;
+}
+
+.userMessage {
+  background-color: #e8f1f3;
+  margin-right: 2%;
+  justify-content: right;
+}
