@@ -116,6 +116,9 @@ const MessageBar = ({
   const [messageText, setMessageText] = useState<string>("");
 
   const appendMessage = () => {
+    if (!messageText) {
+      return;
+    }
     const newMessage: messageType = {
       senderId: userId,
       receiverId: friendId,
@@ -127,6 +130,7 @@ const MessageBar = ({
       messageRef.current.value = "";
     }
     setMessages((prevMessages) => [...prevMessages, newMessage]);
+    setMessageText("");
   };
 
   return (
@@ -140,6 +144,11 @@ const MessageBar = ({
         placeholder="Enter Text Here..."
         className={styles.sendInput}
         onChange={(e) => setMessageText(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            appendMessage();
+          }
+        }}
       />
     </div>
   );
