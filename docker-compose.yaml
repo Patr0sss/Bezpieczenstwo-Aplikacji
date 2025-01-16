@@ -1,0 +1,40 @@
+services:
+  db:
+    build: 
+      dockerfile: db.Dockerfile
+      context: ./
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=postgres_password 
+      - POSTGRES_DB=test
+    ports:
+      - 5432:5432
+  backend:
+    depends_on:
+      - db
+    build:
+      dockerfile: Dockerfile 
+      context: ./backend
+    volumes:
+      - /app/node_modules
+      - ./backend:/app
+    environment:
+      - PGUSER=postgres
+      - PGHOST=localhost
+      - PGDATABASE=test
+      - PGPASSWORD=postgres_password
+      - PGPORT=5432
+      - jwtSecret=
+    ports: 
+      - 3000:3000
+  frontend:
+    build: 
+      dockerfile: Dockerfile
+      context: ./BAWIM
+    volumes:
+      - /app/node_modules
+      - ./BAWIM:/app
+    ports:
+      - 5173:5173
+    
+
