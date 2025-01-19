@@ -36,8 +36,8 @@ const Chat = ({
 }) => {
   const filteredMessages = messages.filter(
     (message) =>
-      message.receiverId === currentFriend.id ||
-      message.senderId === currentFriend.id
+      message.receiverId === currentFriend.user_id ||
+      message.senderId === currentFriend.user_id
   );
 
   return (
@@ -47,13 +47,13 @@ const Chat = ({
         <div
           style={{
             justifyContent:
-              message.senderId === currentFriend.id ? "flex-start" : "flex-end",
+              message.senderId === currentFriend.user_id ? "flex-start" : "flex-end",
           }}
           className={styles.messageContainer}
         >
           <div
             className={
-              message.senderId === currentFriend.id
+              message.senderId === currentFriend.user_id
                 ? styles.messageFromFriend
                 : styles.userMessage
             }
@@ -74,14 +74,14 @@ const NavBar = ({ currentFriend }: { currentFriend: friendType | null }) => {
           <div className={styles.friendInfo}>
             <img
               src={
-                currentFriend.id %2 === 0
+                currentFriend.user_id %2 === 0
                   ? "./images/maleUser.jpg"
                   : "./images/femaleUser.jpg"
               }
               className={styles.userImage}
             ></img>
             <div>
-              <div className={styles.username}>{currentFriend.name}</div>
+              <div className={styles.username}>{currentFriend.username}</div>
               <div className={styles.status}>
                 <div
                   className={styles.statusIcon}
@@ -112,7 +112,7 @@ const MessageBar = ({
 }) => {
   const userId = useSelector((state: RootState) => state.auth.userInfo.id);
   const messageRef = useRef<HTMLInputElement>(null);
-  const friendId = currentFriend?.id;
+  const friendId = currentFriend?.user_id;
   const [messageText, setMessageText] = useState<string>("");
 
   const appendMessage = () => {

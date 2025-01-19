@@ -1,32 +1,38 @@
 import styles from "./friendList.module.css";
 import { friendType } from "../../types";
 import SearchIcon from "@mui/icons-material/Search";
-import { useState, type Dispatch, type SetStateAction } from "react";
+import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { userLogout } from "../../redux/auth/authActions";
-import { AppDispatch, RootState } from "../../redux/store";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../redux/store";
+import { getUsers } from "../../redux/users/usersActions";
 
 export default function FriendList({
-  friends,
   currentFriend,
   setCurrentFriend,
 }: {
-  friends: friendType[];
   currentFriend: friendType | null;
   setCurrentFriend: Dispatch<SetStateAction<friendType | null>>;
 }) {
   const [searchedFriends, setSearchedFriends] = useState<string>("");
+  const dispatch = useDispatch<AppDispatch>();
+  const friendsRedux = useSelector((state: RootState) => state.users.users);
+
+  useEffect(() => {
+      dispatch(getUsers());
+  },[]);
+
   return (
     <div className={styles.friendList}>
       <SearchBar setSearchValue={setSearchedFriends} />
       <div className={styles.friendBarContainer}>
-        {friends
-          .filter((friend) => friend.name.includes(searchedFriends))
+        {friendsRedux
+          .filter((friend) => friend.username.includes(searchedFriends))
           .map((friend) => (
             <FriendBar
-              key={friend.id}
+              key={friend.user_id}
               friend={friend}
               currentFriend={currentFriend}
               onClick={() => setCurrentFriend(friend)}
@@ -85,19 +91,19 @@ const FriendBar = ({
       className={styles.friendBar}
       onClick={onClick}
       style={{
-        backgroundColor: currentFriend?.name === friend.name ? "lightgray" : "",
+        backgroundColor: currentFriend?.username === friend.username ? "lightgray" : "",
       }}
     >
       <img
         src={
-          friend.id %2 === 0
+          friend.user_id %2 === 0
             ? "./images/maleUser.jpg"
             : "./images/femaleUser.jpg"
         }
         className={styles.userImage}
       ></img>
       <div className={styles.friendInfo}>
-        <div>{friend.name}</div>
+        <div>{friend.username}</div>
         <div className={styles.status}>
           <div
             className={styles.statusIcon}
