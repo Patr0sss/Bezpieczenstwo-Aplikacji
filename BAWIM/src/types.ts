@@ -4,8 +4,8 @@ export type friendType = {
 };
 
 export type messageType = {
-  id: number;
+  sender_id?: number;
+  receiver_id?: number;
   message: string;
-  senderId?: number;
-  receiverId?: number;
+  created_at?: string;
 };

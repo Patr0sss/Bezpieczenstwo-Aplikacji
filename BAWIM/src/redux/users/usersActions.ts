@@ -11,7 +11,7 @@ export const getUsers = createAsyncThunk<UsersState>(
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "jwt_token": `${localStorage.getItem("token")}`,
+          "jwt_token": `${sessionStorage.getItem("token")}`,
         },
         
       });

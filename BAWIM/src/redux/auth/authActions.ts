@@ -17,9 +17,9 @@ export const userLogin = createAsyncThunk<AuthState, { username: string; passwor
       if(response.status === 200) {
       const data = await response.json();
 
-      localStorage.setItem("token", data.jwtToken);
-      localStorage.setItem("username", data.username);
-      localStorage.setItem("userId", data.user_id);
+      sessionStorage.setItem("token", data.jwtToken);
+      sessionStorage.setItem("username", data.username);
+      sessionStorage.setItem("userId", data.user_id);
       const id = parseInt(data.user_id);
       return {
         loading: false,
@@ -40,9 +40,9 @@ export const userLogout = createAsyncThunk(
   "auth/logout",
   (_, { rejectWithValue }) => {
     try {
-      localStorage.removeItem("token");
-      localStorage.removeItem("username");
-      localStorage.removeItem("userId");
+      sessionStorage.removeItem("token");
+      sessionStorage.removeItem("username");
+      sessionStorage.removeItem("userId");
       return {
         loading: false,
         userInfo: { username: "" },

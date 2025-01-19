@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { userLogin, userLogout } from "./authActions";
 
-const isLoggedIn = localStorage.getItem("token") ? true : false;
-const username = localStorage.getItem("username") || "";
-const id = parseInt(localStorage.getItem("userId") || "");
+const isLoggedIn = sessionStorage.getItem("token") ? true : false;
+const username = sessionStorage.getItem("username") || "";
+const id = parseInt(sessionStorage.getItem("userId") || "");
 
 export interface AuthState {
   loading: boolean;

@@ -5,7 +5,7 @@ import SendIcon from "@mui/icons-material/Send";
 import messages from "../../pages/homePage/mockMessages";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
-import { useRef, useState, type Dispatch, type SetStateAction } from "react";
+import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 
 export default function FriendChat({
   currentFriend,
@@ -18,7 +18,7 @@ export default function FriendChat({
     <div className={styles.friendChatContainer}>
       <NavBar currentFriend={currentFriend} />
       {currentFriend ? (
-        <Chat currentFriend={currentFriend} messages={confMessages} />
+        <Chat currentFriend={currentFriend} messages={confMessages} setMessages={setConfMessages} />
       ) : (
         "Select a friend"
       )}
@@ -30,30 +30,54 @@ export default function FriendChat({
 const Chat = ({
   currentFriend,
   messages,
+  setMessages,
 }: {
   currentFriend: friendType;
   messages: messageType[];
+  setMessages: Dispatch<SetStateAction<messageType[]>>;
 }) => {
-  const filteredMessages = messages.filter(
-    (message) =>
-      message.receiverId === currentFriend.user_id ||
-      message.senderId === currentFriend.user_id
-  );
+
+  const getMessages = async () => {
+    const response = await fetch("http://localhost:3000/users/get-messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "jwt_token": `${sessionStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({user_two_id : currentFriend.user_id}),
+    });
+    const data = await response.json();
+    setMessages(data);
+    console.log(data);
+    if (data.error) {
+      console.log(data.error);
+    } 
+  }
+
+  useEffect(() => {
+    getMessages();
+  }, [currentFriend]);
+  
+  // const filteredMessages = messages.filter(
+  //   (message) =>
+  //     message.receiverId === currentFriend.user_id ||
+  //     message.senderId === currentFriend.user_id
+  // );
 
   return (
     <div className={styles.chat}>
-      {filteredMessages.length === 0 ? "Brak wiadomości" : null}
-      {filteredMessages.map((message) => (
+      {messages.length === 0 ? "Brak wiadomości" : null}
+      {messages.map((message) => (
         <div
           style={{
             justifyContent:
-              message.senderId === currentFriend.user_id ? "flex-start" : "flex-end",
+              message.sender_id === currentFriend.user_id ? "flex-start" : "flex-end",
           }}
           className={styles.messageContainer}
         >
           <div
             className={
-              message.senderId === currentFriend.user_id
+              message.sender_id === currentFriend.user_id
                 ? styles.messageFromFriend
                 : styles.userMessage
             }
@@ -114,16 +138,15 @@ const MessageBar = ({
   const messageRef = useRef<HTMLInputElement>(null);
   const friendId = currentFriend?.user_id;
   const [messageText, setMessageText] = useState<string>("");
-
   const appendMessage = () => {
     if (!messageText) {
       return;
     }
+    sendMessage();
     const newMessage: messageType = {
-      senderId: userId,
-      receiverId: friendId,
+      sender_id: userId,
+      receiver_id: friendId,
       message: messageText,
-      id: Date.now(),
     };
 
     if (messageRef.current) {
@@ -132,6 +155,22 @@ const MessageBar = ({
     setMessages((prevMessages) => [...prevMessages, newMessage]);
     setMessageText("");
   };
+
+  const sendMessage = async () => {
+    const response = await fetch("http://localhost:3000/users/post-messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "jwt_token": `${sessionStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({user_two_id : currentFriend?.user_id, message : messageText}),
+    });
+    const data = await response.json();
+    console.log(data);
+    if (data.error) {
+      console.log(data.error);
+    } 
+  }
 
   return (
     <div className={styles.sendBar}>
