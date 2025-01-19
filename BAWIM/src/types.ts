@@ -2,8 +2,8 @@ export type friendType = {
   id: number;
   name: string;
   email: string;
-  status: "online" | "offline";
-  sex?: "male" | "female";
+  // status: "online" | "offline";
+  // sex?: "male" | "female";
 };
 
 export type messageType = {

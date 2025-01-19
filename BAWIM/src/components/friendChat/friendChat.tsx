@@ -74,7 +74,7 @@ const NavBar = ({ currentFriend }: { currentFriend: friendType | null }) => {
           <div className={styles.friendInfo}>
             <img
               src={
-                currentFriend.sex === "male"
+                currentFriend.id %2 === 0
                   ? "./images/maleUser.jpg"
                   : "./images/femaleUser.jpg"
               }
@@ -87,10 +87,10 @@ const NavBar = ({ currentFriend }: { currentFriend: friendType | null }) => {
                   className={styles.statusIcon}
                   style={{
                     backgroundColor:
-                      currentFriend.status === "online" ? "green" : "red",
+                      "green",
                   }}
                 ></div>
-                {currentFriend.status}
+                online
               </div>
             </div>
           </div>

@@ -26,6 +26,7 @@ export default function FriendList({
           .filter((friend) => friend.name.includes(searchedFriends))
           .map((friend) => (
             <FriendBar
+              key={friend.id}
               friend={friend}
               currentFriend={currentFriend}
               onClick={() => setCurrentFriend(friend)}
@@ -41,9 +42,7 @@ const SearchBar = ({
 }: {
   setSearchValue: Dispatch<SetStateAction<string>>;
 }) => {
-  const username = useSelector(
-    (state: RootState) => state.auth.userInfo.username
-  );
+  const username = useSelector((state: RootState) => state.auth.userInfo.username as string);
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const handleLogout = () => {
@@ -91,7 +90,7 @@ const FriendBar = ({
     >
       <img
         src={
-          friend.sex === "male"
+          friend.id %2 === 0
             ? "./images/maleUser.jpg"
             : "./images/femaleUser.jpg"
         }
@@ -103,10 +102,10 @@ const FriendBar = ({
           <div
             className={styles.statusIcon}
             style={{
-              backgroundColor: friend.status === "online" ? "green" : "red",
+              backgroundColor: "green",
             }}
           ></div>
-          {friend.status}
+          online
         </div>
       </div>
     </div>

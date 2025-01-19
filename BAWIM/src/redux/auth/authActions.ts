@@ -1,10 +1,10 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { AuthState } from "./authSlice";
 
-export const userLogin = createAsyncThunk(
+export const userLogin = createAsyncThunk<AuthState, { username: string; password: string }>(
   "auth/login",
   async (
-    { username, password }: { username: string; password: string },
-    { rejectWithValue }
+    { username, password },{ rejectWithValue }
   ) => {
     try {
       const response = await fetch ("http://localhost:3000/auth/login", {
@@ -20,14 +20,16 @@ export const userLogin = createAsyncThunk(
       localStorage.setItem("token", data.jwtToken);
       localStorage.setItem("username", data.username);
       localStorage.setItem("userId", data.user_id);
-
+      const id = parseInt(data.user_id);
       return {
         loading: false,
-        userInfo: { username : data.username, id: data.user_id },
+        userInfo: { username : data.username, id  },
         isLoggedIn: true,
         error: "",
       };
-    } 
+      } else {
+        return rejectWithValue("Invalid credentials");
+      }
     } catch (error) {
       return rejectWithValue((error as Error).message);
     }
