@@ -17,7 +17,6 @@ export const getUsers = createAsyncThunk<UsersState>(
       });
       if(response.status === 200) {
       const data = await response.json();
-      console.log(data);
     return {
         loading: false,
         users: data,

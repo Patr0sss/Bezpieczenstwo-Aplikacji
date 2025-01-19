@@ -18,13 +18,14 @@ const getIo = (server) => {
         console.log(`User Connected: ${socket.id}`);
 
         socket.on("join_room", (data) => {
-            socket.join(data);
-            console.log(`User with ID: ${socket.id} joined room: ${data}`);
+            socket.join(data.chatId);
+            console.log(`User with ID: ${socket.id} joined room: ${data.chatId}`);
          });
 
         socket.on("send_message", (data) => {
+            console.log(data);
             socket.to(data.room).emit("receive_message", data.message);
-            dbUpdate(data.sender_id, data.receiver_id, data.message);a
+            dbUpdate(data.sender_id, data.receiver_id, data.message);
 
         });
     });

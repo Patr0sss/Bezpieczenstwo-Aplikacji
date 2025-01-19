@@ -12,7 +12,7 @@ module.exports = async function(sender_id,receiver_id, message) {
       };
     const formattedDate = today.toLocaleString('pl-PL', options);
     try{
-        await pool.query('INSERT INTO messages (sender_id,receiver_id, message,created_at) VALUES ($1,$2,$3,$4)', [user_one_id, user_two_id, message, formattedDate]);
+        await pool.query('INSERT INTO messages (sender_id,receiver_id, message,created_at) VALUES ($1,$2,$3,$4)', [sender_id, receiver_id, message, formattedDate]);
         console.log('msg added');
     }
     catch(err){

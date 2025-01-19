@@ -19,9 +19,13 @@ export default function FriendList({
   const [searchedFriends, setSearchedFriends] = useState<string>("");
   const dispatch = useDispatch<AppDispatch>();
   const friendsRedux = useSelector((state: RootState) => state.users.users);
+  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+
 
   useEffect(() => {
+    if (isLoggedIn) {
       dispatch(getUsers());
+    }
   },[]);
 
   return (

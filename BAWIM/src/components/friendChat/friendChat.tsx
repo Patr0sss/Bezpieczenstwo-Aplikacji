@@ -2,17 +2,20 @@ import { friendType, messageType } from "../../types";
 import styles from "./friendChat.module.css";
 import PhotoCameraFrontIcon from "@mui/icons-material/PhotoCameraFront";
 import SendIcon from "@mui/icons-material/Send";
-import messages from "../../pages/homePage/mockMessages";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
+import io from "socket.io-client";
+
+// Create socket instance outside of component to maintain single connection
+const socket = io('http://localhost:3002');
 
 export default function FriendChat({
   currentFriend,
 }: {
   currentFriend: friendType | null;
 }) {
-  const [confMessages, setConfMessages] = useState<messageType[]>(messages);
+  const [confMessages, setConfMessages] = useState<messageType[]>([]);
 
   return (
     <div className={styles.friendChatContainer}>
@@ -37,6 +40,15 @@ const Chat = ({
   setMessages: Dispatch<SetStateAction<messageType[]>>;
 }) => {
   const chatRef = useRef<HTMLDivElement>(null);
+  const currentUserId = useSelector((state: RootState) => state.auth.userInfo.id) || -1;
+  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn) 
+
+  const createRoomId = () => {
+    if (currentUserId > currentFriend.user_id) {
+      return `${currentFriend.user_id}${currentUserId}`;
+    }
+    return `${currentUserId}${currentFriend.user_id}`;
+  };
 
   const getMessages = async () => {
     const response = await fetch("http://localhost:3000/users/get-messages", {
@@ -45,34 +57,51 @@ const Chat = ({
         "Content-Type": "application/json",
         "jwt_token": `${sessionStorage.getItem("token")}`,
       },
-      body: JSON.stringify({user_two_id : currentFriend.user_id}),
+      body: JSON.stringify({user_two_id: currentFriend.user_id}),
     });
     const data = await response.json();
-    setMessages(data);
-    console.log(data);
-    if (data.error) {
+    if (!data.error) {
+      setMessages(data);
+    } else {
       console.log(data.error);
-    } 
-  }
+    }
+  };
 
+      //Set up message listener
+      const handleReceiveMessage = () => {
+        getMessages();
+      };
+
+      
   useEffect(() => {
+    if (!isLoggedIn) {
+      return;
+    }
     getMessages();
+    
+    const roomId = parseInt(createRoomId());
+    socket.emit('join_room', { chatId: roomId });
+    socket.on("receive_message", handleReceiveMessage);
+  
+    return () => {
+      socket.off("receive_message", handleReceiveMessage);
+    };
   }, [currentFriend]);
 
   useEffect(() => {
     if (chatRef.current) {
       chatRef.current.scrollIntoView();
     }
-  }, [currentFriend, messages]);
+  }, [messages]);
 
   return (
     <div className={styles.chat}>
       {messages.length === 0 ? "Brak wiadomości" : null}
-      {messages.map((message) => (
+      {messages.map((message, index) => (
         <div
+          key={index}
           style={{
-            justifyContent:
-              message.sender_id === currentFriend.user_id ? "flex-start" : "flex-end",
+            justifyContent: message.sender_id === currentFriend.user_id ? "flex-start" : "flex-end",
           }}
           className={styles.messageContainer}
         >
@@ -87,7 +116,7 @@ const Chat = ({
           </div>
         </div>
       ))}
-      <div ref={chatRef} style={{width:"100%",height:"1px", flexShrink:0}}></div>
+      <div ref={chatRef} style={{width:"100%", height:"1px", flexShrink:0}}></div>
     </div>
   );
 };
@@ -138,45 +167,41 @@ const MessageBar = ({
 }) => {
   const userId = useSelector((state: RootState) => state.auth.userInfo.id);
   const messageRef = useRef<HTMLInputElement>(null);
-  const friendId = currentFriend?.user_id;
   const [messageText, setMessageText] = useState<string>("");
-  const appendMessage = () => {
-    if (!messageText) {
-      return;
-    }
-    sendMessage();
-    const newMessage: messageType = {
-      sender_id: userId,
-      receiver_id: friendId,
-      message: messageText,
-    };
 
-    if (messageRef.current) {
-      messageRef.current.value = "";
+  const createRoomId = () => {
+    if (userId && currentFriend && userId > currentFriend.user_id) {
+      return `${currentFriend.user_id}${userId}`;
     }
-    setMessages((prevMessages) => [...prevMessages, newMessage]);
-    setMessageText("");
+    return `${userId}${currentFriend?.user_id}`;
   };
 
   const sendMessage = async () => {
-    const response = await fetch("http://localhost:3000/users/post-messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "jwt_token": `${sessionStorage.getItem("token")}`,
-      },
-      body: JSON.stringify({user_two_id : currentFriend?.user_id, message : messageText}),
+
+    const roomId = parseInt(createRoomId());
+    socket.emit('send_message', {
+      room: roomId,
+      message: messageText,
+      sender_id: userId,
+      receiver_id: currentFriend?.user_id,
     });
-    const data = await response.json();
-    console.log(data);
-    if (data.error) {
-      console.log(data.error);
-    } 
-  }
+
+    const newMessage: messageType = {
+      sender_id: userId,
+      receiver_id: currentFriend?.user_id,
+      message: messageText,
+    };
+    setMessages(prev => [...prev, newMessage]);
+
+    setMessageText("");
+    if (messageRef.current) {
+      messageRef.current.value = "";
+    }
+  };
 
   return (
     <div className={styles.sendBar}>
-      <button onClick={appendMessage} className={styles.sendButton}>
+      <button onClick={sendMessage} className={styles.sendButton}>
         <SendIcon style={{ color: "darkGray" }} />
       </button>
       <input
@@ -187,7 +212,7 @@ const MessageBar = ({
         onChange={(e) => setMessageText(e.target.value)}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
-            appendMessage();
+            sendMessage();
           }
         }}
       />
