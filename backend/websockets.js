@@ -1,13 +1,14 @@
 const express = require('express');
 const { Server } = require('socket.io');
-const  dbUpdate = require('addMessageDB.js');
+const  dbUpdate = require('./middleware/addMessageDB.js');
 const appWebSocket = express();
 
 const getIo = (server) => {
     const io = new Server(server, {
         cors: {
             origin: "http://localhost:5173",
-            methods: ["GET", "POST"]
+            methods: ["GET", "POST"],
+            
         }
     });
 
@@ -23,7 +24,7 @@ const getIo = (server) => {
 
         socket.on("send_message", (data) => {
             socket.to(data.room).emit("receive_message", data.message);
-            dbUpdate(data.sender_id, data.receiver_id, data.message,);
+            dbUpdate(data.sender_id, data.receiver_id, data.message);a
 
         });
     });

@@ -1,8 +1,8 @@
 const pool = require("../utils/db");
 
 
-module.exports = function(sender_id,receiver_id, message) {
-    consst today = new Date(); 
+module.exports = async function(sender_id,receiver_id, message) {
+    const today = new Date(); 
     const options = { 
         year: 'numeric', 
         month: '2-digit', 
