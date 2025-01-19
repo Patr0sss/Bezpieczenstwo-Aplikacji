@@ -19,12 +19,12 @@ services:
       - /app/node_modules
       - ./backend:/app
     environment:
-      - PGUSER=postgres
-      - PGHOST=localhost
+      - PGUSER=admin
+      - PGHOST=db
       - PGDATABASE=test
       - PGPASSWORD=postgres_password
       - PGPORT=5432
-      - jwtSecret=
+      - jwtSecret=stronkSecret
     ports: 
       - 3000:3000
   frontend:

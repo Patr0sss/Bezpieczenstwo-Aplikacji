@@ -7,3 +7,5 @@ const pgClient = new Pool({
   password: keys.pgPassword,
   port: keys.pgPort
 });
+
+module.exports = pgClient;

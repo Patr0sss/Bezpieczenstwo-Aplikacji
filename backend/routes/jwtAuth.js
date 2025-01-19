@@ -18,17 +18,14 @@ router.post("/register",  async (req, res) => {
       return res.status(401).json("User already exist!");
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const bcryptPassword = await bcrypt.hash(password, salt);
-
     let newUser = await pool.query(
-      "INSERT INTO users (user_name, user_password) VALUES ($1, $2) RETURNING *",
-      [username, bcryptPassword]
+      "INSERT INTO users (username, user_password) VALUES ($1, $2) RETURNING *",
+      [username, password]
     );
 
     const jwtToken = jwtGenerator(newUser.rows[0].user_id);
 
-    return res.json({ jwtToken });
+    return res.status(200).json({ jwtToken });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");
@@ -47,16 +44,13 @@ router.post("/login",  async (req, res) => {
       return res.status(401).json("Invalid Credentials");
     }
 
-    const validPassword = await bcrypt.compare(
-      password,
-      user.rows[0].user_password
-    );
+    const validPassword = password === user.rows[0].user_password;
 
     if (!validPassword) {
       return res.status(401).json("Invalid Credential");
     }
     const jwtToken = jwtGenerator(user.rows[0].user_id);
-    return res.json({ jwtToken });
+    return res.status(200).json({ jwtToken, username, user_id: user.rows[0].user_id });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");

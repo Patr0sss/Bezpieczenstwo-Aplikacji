@@ -16,9 +16,9 @@ export default function Login() {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     dispatch(userLogin({ username: user.userName, password: user.password }));
-    if (isLoggedIn) {
-      navigate("/");
-    }
+    // if (isLoggedIn) {
+    //   navigate("/");
+    // }
   };
 
   useEffect(() => {
@@ -32,7 +32,6 @@ export default function Login() {
       <h1>Welcome Back !</h1>
       <form onSubmit={handleLogin} className={styles.loginForm}>
         <TextField
-          id="filled-basic"
           label="Username"
           variant="outlined"
           type="text"
@@ -41,7 +40,6 @@ export default function Login() {
         />
 
         <TextField
-          id="filled-basic"
           label="Password"
           variant="outlined"
           type="password"

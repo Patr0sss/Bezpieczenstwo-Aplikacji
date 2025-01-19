@@ -7,16 +7,27 @@ export const userLogin = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      console.log(password);
-      localStorage.setItem("token", "token");
-      localStorage.setItem("username", username);
-      localStorage.setItem("userId", JSON.stringify(202));
+      const response = await fetch ("http://localhost:3000/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      });
+      if(response.status === 200) {
+      const data = await response.json();
+
+      localStorage.setItem("token", data.jwtToken);
+      localStorage.setItem("username", data.username);
+      localStorage.setItem("userId", data.user_id);
+
       return {
         loading: false,
-        userInfo: { username, id: 202 },
+        userInfo: { username : data.username, id: data.user_id },
         isLoggedIn: true,
         error: "",
       };
+    } 
     } catch (error) {
       return rejectWithValue((error as Error).message);
     }

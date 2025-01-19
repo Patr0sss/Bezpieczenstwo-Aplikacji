@@ -14,11 +14,32 @@ export default function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    registerUser();
     if (!isLoggedIn) {
       navigate("/login");
     }
   });
 
+  const registerUser = async () => {
+    const response = await fetch("http://localhost:3000/users", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+    console.log("------------------")
+    console.log(data)
+    console.log("------------------")
+    // if(response.status === 200) {
+    //   navigate("/login");
+    // }
+
+    // if (data.error) {
+    //   console.log(data.error);
+    // } 
+   
+  }
   return (
     <div className={styles.base}>
       <FriendList
