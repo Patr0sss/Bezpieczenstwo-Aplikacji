@@ -5,7 +5,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var jwtAuthRouter = require('./routes/jwtAuth.js')
 var cors = require("cors");
-
+const io = require("socket.io") 
 var app = express();
 app.set('view engine', 'ejs'); 
 
@@ -39,5 +39,8 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.send('Welcome to this GREAT API');
 });
+
+
+
 
 module.exports = app;

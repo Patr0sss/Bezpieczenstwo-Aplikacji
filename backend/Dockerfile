@@ -13,6 +13,6 @@ RUN npm install
 COPY . .
 
 
-EXPOSE $PORT 
+EXPOSE $PORT 3002
 CMD ["npm", "start"]
 

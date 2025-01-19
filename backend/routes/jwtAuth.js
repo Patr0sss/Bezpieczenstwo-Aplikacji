@@ -3,7 +3,7 @@ const router = express.Router();
 const pool = require("../utils/db");
 const jwtGenerator = require("../utils/jwtGen");
 const authorize = require("../middleware/authorize");
-
+const validation = require("../middleware/validinfo");
 
 
 router.post("/register",  async (req, res) => {
