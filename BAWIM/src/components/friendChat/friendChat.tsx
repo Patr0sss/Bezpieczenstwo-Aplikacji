@@ -36,6 +36,7 @@ const Chat = ({
   messages: messageType[];
   setMessages: Dispatch<SetStateAction<messageType[]>>;
 }) => {
+  const chatRef = useRef<HTMLDivElement>(null);
 
   const getMessages = async () => {
     const response = await fetch("http://localhost:3000/users/get-messages", {
@@ -57,12 +58,12 @@ const Chat = ({
   useEffect(() => {
     getMessages();
   }, [currentFriend]);
-  
-  // const filteredMessages = messages.filter(
-  //   (message) =>
-  //     message.receiverId === currentFriend.user_id ||
-  //     message.senderId === currentFriend.user_id
-  // );
+
+  useEffect(() => {
+    if (chatRef.current) {
+      chatRef.current.scrollIntoView();
+    }
+  }, [currentFriend, messages]);
 
   return (
     <div className={styles.chat}>
@@ -86,6 +87,7 @@ const Chat = ({
           </div>
         </div>
       ))}
+      <div ref={chatRef} style={{width:"100%",height:"1px", flexShrink:0}}></div>
     </div>
   );
 };
