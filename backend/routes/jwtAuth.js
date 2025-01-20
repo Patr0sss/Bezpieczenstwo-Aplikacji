@@ -10,18 +10,14 @@ router.post("/register",  async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    const user = await pool.query("SELECT * FROM users WHERE username = $1", [
-      username
-    ]);
+    const user = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
 
     if (user.rows.length > 0) {
       return res.status(401).json("User already exist!");
     }
 
     let newUser = await pool.query(
-      "INSERT INTO users (username, user_password) VALUES ($1, $2) RETURNING *",
-      [username, password]
-    );
+      `INSERT INTO users (username, user_password) VALUES ('${username}', '${password}) RETURNING *`);
 
     const jwtToken = jwtGenerator(newUser.rows[0].user_id);
 
@@ -36,9 +32,7 @@ router.post("/login",  async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    const user = await pool.query("SELECT * FROM users WHERE username = $1", [
-      username
-    ]);
+    const user = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
 
     if (user.rows.length === 0) {
       return res.status(401).json("Invalid Credentials");
