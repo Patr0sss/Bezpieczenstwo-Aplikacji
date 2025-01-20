@@ -7,7 +7,6 @@ import { RootState } from "../../redux/store";
 import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import io from "socket.io-client";
 
-// Create socket instance outside of component to maintain single connection
 const socket = io('http://localhost:3002');
 
 export default function FriendChat({
@@ -67,7 +66,6 @@ const Chat = ({
     }
   };
 
-      //Set up message listener
       const handleReceiveMessage = () => {
         getMessages();
       };
